@@ -1,10 +1,7 @@
 import React, {useState} from 'react';
 
 function SignupForm({toggle, setToggle}){
-
-const [username, setUsername] = useState('defaultUsername');
-const [password, setPassword] = useState('defaultPassword');
-
+const [formError, setFormError] = useState('');
 const [formData, setFormData] = useState({
     username:'',
     password:'',
@@ -16,22 +13,50 @@ function onSwitchToLogin(){
     setToggle(true);
 }
 
-function handleSignUp(){
+const resetFormData = () => {
+    setFormData({
+      username: '',
+      password: '',
+      confirmPassword: '',
+      email: ''
+    });
+  };
 
-}
+// Function to handle form submission
+const handleSubmit = (event) => {
+    event.preventDefault();
+    // NEED: another check if USERNAME already exists by checking backend DataBase 'Username is already taken!' == formError
+    if(!formData.username.trim() || !formData.password.trim() || !formData.confirmPassword.trim() || !formData.email.trim()){
+        setFormError('All fields are required!');
+    } else if (formData.password != formData.confirmPassword){
+        setFormError('Pasword do not match!');
+    } else {
+        // insert the code to send data to Database
+        setFormError('User signed up successfully!')
+        
+        // DEBUG statements
+        console.log("Username: " ,formData.username);
+        console.log("Password: ", formData.password);
+        console.log("ConfirmPassword: ", formData.confirmPassword);
+        console.log("Email: ", formData.email);
+        resetFormData();
+    }
+  };
 
-function handleChange(){
-
-}
-
-function handleSubmit(){
-
-}
+  // Function to handle input changes
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    // Update the form state using setFormData function
+    setFormData({
+      ...formData, // Spread existing form data
+      [name]: value // Update the value of the changed field
+    });
+  };
 
 return (
     <div>
+        {formError && <div style={{ color: 'red' }}>{formError}</div>}
         <h2>Signup</h2>
-
         <form onSubmit={handleSubmit}>
             <div>
                 <label htmlFor="username">Username: </label>
@@ -67,7 +92,8 @@ return (
             </div>
             <div>
                 <label htmlFor="email">Email: </label>
-                <input type="email"
+                <input 
+                type="email"
                 id="email"
                 name="email"
                 placeholder='Enter your email'
@@ -75,7 +101,7 @@ return (
                 onChange={handleChange} 
                 />
             </div>
-            <button onClick={handleSignUp}>Sign-Up</button><br/>
+            <button type="submit">Sign-Up</button><br/>
             <button onClick={onSwitchToLogin}>Switch to Login</button>
         </form>
     </div>
