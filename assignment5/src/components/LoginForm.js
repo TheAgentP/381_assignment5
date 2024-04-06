@@ -32,19 +32,27 @@ const handleSubmit = (event) => {
     })
     .then(response => response.json())
     .then(response => {
-      setAuthenticated(response.authenticated)
-      setFormError(response.message)
+      setAuthenticated(response.authenticated);
+      setFormError(response.message);
+      if(response.authenticated){
+        localStorage.setItem('loggedIn', 'true');
+        setUsername('');
+        setPassword('');
+        // setLoggedIn(true);
+        navigate('/products');
+      }else{
+        localStorage.setItem('loggedIn', 'false');
+      }
     })
     .catch(error => {
       alert('Authentication failed. Incorrect username or passsword.');
       console.log(error);
     });
   }
-    setUsername('');
-    setPassword('');
+    // setUsername('');
+    // setPassword('');
     // setLoggedIn(true);
-    localStorage.setItem('loggedIn', 'true');
-    navigate('/products');
+    // navigate('/products');
     // SHOULD : Nagivate to Products when SUCCESSFULLY LOGGED IN
 };
 
