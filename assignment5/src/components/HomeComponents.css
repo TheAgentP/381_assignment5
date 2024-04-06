@@ -1,0 +1,11 @@
+nav, header{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.shop-now-button{
+    text-decoration: none;
+    color: black;
+}
+

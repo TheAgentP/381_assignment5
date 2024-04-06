@@ -1,3 +1,4 @@
+import { paste } from '@testing-library/user-event/dist/paste';
 import React, {useState} from 'react';
 
 function SignupForm({toggle, setToggle}){
@@ -31,9 +32,19 @@ const handleSubmit = (event) => {
     } else if (formData.password != formData.confirmPassword){
         setFormError('Pasword do not match!');
     } else {
-        // insert the code to send data to Database
-        setFormError('User signed up successfully!')
-        
+        fetch('http://127.0.0.1:5000/register',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body : JSON.stringify({'username':formData.username, 'password':formData.password, 'email':formData.email}),
+        })   
+        .then(response => response.json())
+        .then(response => setFormError(response.message))
+        .catch(error => {
+            alert('Signing Up failed.')
+            console.log(error);
+        });
         // DEBUG statements
         console.log("Username: " ,formData.username);
         console.log("Password: ", formData.password);

@@ -1,10 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
+import { useNavigate } from 'react-router-dom';
+// import {Context} from '../App';
 
 function LoginForm({toggle, setToggle}){
+// const { loggedIn, setLoggedIn } = useContext(Context);
 
+const navigate = useNavigate();
 const [username, setUsername] = useState('');
 const [password, setPassword] = useState('');
 const [formError, setFormError] = useState('');
+const [authenticated, setAuthenticated] = useState(false)
 
 const handleSubmit = (event) => {
   event.preventDefault();
@@ -14,19 +19,34 @@ const handleSubmit = (event) => {
     // sets the FormError state
     setFormError('Username and Password are required.');
   } else{
-    // insert code for submitting to database
+    // DEBUG insert code for submitting to database
     console.log("Username: ", username);
     console.log("Password: ", password);
 
+    fetch('http://127.0.0.1:5000/authenticate', {
+      method : 'POST',
+      headers: {
+        'Content-Type' : 'application/json',
+      },
+      body : JSON.stringify({'username':username, 'password':password}),
+    })
+    .then(response => response.json())
+    .then(response => {
+      setAuthenticated(response.authenticated)
+      setFormError(response.message)
+    })
+    .catch(error => {
+      alert('Authentication failed. Incorrect username or passsword.');
+      console.log(error);
+    });
+  }
     setUsername('');
     setPassword('');
-    setFormError('');
-  }
+    // setLoggedIn(true);
+    localStorage.setItem('loggedIn', 'true');
+    navigate('/products');
+    // SHOULD : Nagivate to Products when SUCCESSFULLY LOGGED IN
 };
-
-function handleLogin(){
-
-}
 
 function onSwitchToSignup(){
     setToggle(false);
@@ -64,9 +84,12 @@ return (
             onChange={(e) => setPassword(e.target.value)}
         />
         </div>
-        <button onClick={handleLogin}>Login</button><br/>
+        <button type="submit">Login</button>
+        <br/>
         <button onClick={onSwitchToSignup}>Switch to Signup</button>
     </form>
+
+    <button onClick={()=>localStorage.setItem('loggedIn', 'false')}>Logout</button>
     </div>
     
 
